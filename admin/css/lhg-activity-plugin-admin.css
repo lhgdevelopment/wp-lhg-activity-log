@@ -1,0 +1,48 @@
+/**
+ * Admin styles for the plugin.
+ */
+.lhg-activity-plugin-admin-header {
+  margin-bottom: 20px;
+}
+
+.lhg-activity-plugin-admin-footer {
+  margin-top: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.lhg-activity-plugin-status-active {
+  color: green;
+  font-weight: bold;
+}
+
+.lhg-activity-plugin-status-inactive {
+  color: red;
+}
+
+.lhg-activity-plugin-status-pending {
+  color: orange;
+}
+
+/* Form styles */
+#lhg-activity-item-form .form-table th {
+  width: 150px;
+}
+
+/* List table styles */
+.lhg-list-table .column-name {
+  width: 25%;
+}
+
+.lhg-list-table .column-description {
+  width: 40%;
+}
+
+.lhg-list-table .column-status {
+  width: 15%;
+}
+
+.lhg-list-table .column-created_at {
+  width: 15%;
+}
+
