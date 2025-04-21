@@ -55,3 +55,6 @@ This SOP describes the step-by-step procedure to install and activate the **LHG 
 ### 3. Verify Installation
 - After activation, you should see a new menu item or settings area for the **LHG Activity Log** under the WordPress Dashboard (location may vary depending on plugin settings).
 - Confirm the plugin is working by performing some activities (e.g., editing a page) and checking if logs are generated.
+
+--- 
+Here is a Loom instruction: [https://www.loom.com/share/d98124c61a7847878c6842f6d1e25929](https://www.loom.com/share/d98124c61a7847878c6842f6d1e25929)
