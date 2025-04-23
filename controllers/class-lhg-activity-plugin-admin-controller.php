@@ -46,9 +46,7 @@ class LHG_Activity_Plugin_Admin_Controller {
     }*/
     
     public function enqueue_admin_scripts($hook) {
-        // Get enabled log options from settings
-        //$enabled_logs = get_option('enable_notifications', []);
-        
+        // Get enabled log options from settings        
         $options = get_option('lhg_activity_plugin_settings');
         $logs = isset($options['enable_to_log']) ? explode(',', $options['enable_to_log']) : [];
         $enabled_logs_type = [];
@@ -105,10 +103,6 @@ class LHG_Activity_Plugin_Admin_Controller {
                 $enabled_logs_term[] = 'term';
             }
         }
-
-
-
-
         if (isset($screen->taxonomy) && (
             (in_array('post_tag', $logs) && $screen->taxonomy == 'post_tag') || 
             (in_array('category', $logs) && $screen->taxonomy == 'category')
@@ -229,13 +223,6 @@ class LHG_Activity_Plugin_Admin_Controller {
             );
         }
     }
-    
-
-
-
-
-
-
 
     // save and list category and tag
     public function save_custom_category_field($term_id) {

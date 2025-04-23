@@ -30,6 +30,34 @@ jQuery(document).ready(function ($) {
         $('#custom-popup').fadeIn(); // Show the popup
     });
 
+    // save draft function
+    $('#save-post').on('click', function (event) {
+        event.preventDefault(); // Prevent form submission
+        const url = new URL(window.location); // Ensure absolute URL
+        const urlParams = new URLSearchParams(url.search);
+
+        let postType;
+
+        if (urlParams.has('post_type')) {
+            postType = urlParams.get('post_type'); // e.g., 'page' or 'post'
+        } else if (urlParams.has('post')) {
+            // If it's a post but no post_type param is present, fetch it from the DOM (WordPress admin usually sets it)
+            const postId = urlParams.get('post');
+            const postTypeElement = document.querySelector('#post_type'); // Hidden input used in WP admin
+            if (postTypeElement) {
+                postType = postTypeElement.value;
+            } else {
+                postType = 'post'; // Default fallback
+            }
+        } else {
+            postType = 'post'; // Default fallback
+        }       
+        $('#cust_popup_title').text(postType);
+        gblelem = $(this);
+        gblElemType = 'save_draft_' + postType;
+        $('#custom-popup').fadeIn(); // Show the popup
+    });  
+
     // post or page trash button
     if (!(window.location.pathname.includes('/wp-admin/users.php'))) {
         $('.submitdelete').on('click', function (event) {
@@ -114,27 +142,7 @@ jQuery(document).ready(function ($) {
         }
     }
 
-    // create the user
-    // if($('button.button-link').length > 0){
-    //     var inputbtn = $('<button>').attr({
-    //         class: 'tmpupdatetheme',
-    //         id: 'tmpupdatethemeid'
-    //     })
-    //     .text('Update Now');
-    //     $('button.button-link').hide();
-    //     $('button.button-link').parent().prepend(inputbtn);
-    //     $('button.button-link').parent().append('<style type="text/css">#createusersub{display:none !important;}</style>');
-    //     // category create
-    //     $('#tmpupdatethemeid').on('click', function (event) {                
-    //         $('#cust_popup_title').text('user');
-    //         event.preventDefault();
-    //         gblelem = $('#createusersub');
-    //         gblElemType = 'create_user';
-    //         $('#custom-popup').fadeIn(); // Show the popup
-    //     });
-    // }
-
-
+    
     $('#createusersub').on('click', function (event) {
         event.preventDefault(); // Prevent form submission         
         $('#cust_popup_title').text('user');
@@ -175,12 +183,12 @@ jQuery(document).ready(function ($) {
             role: $original.attr('role'),
             'aria-label': $original.attr('aria-label'),
             href: $original.attr('href'),
-            id:'tmpdelete'
+            class:'tmpdelete'
         }).text('Delete')
           .css('cursor', 'pointer');
           $original.hide();
         $original.parent().prepend(inputbtn);
-        $('#tmpdelete').on('click', function (event) {
+        $('.tmpdelete').on('click', function (event) {
             const url = new URL(window.location.href); // Get the full URL
             const urlParams = new URLSearchParams(url.search); // Extract query parameters
             const taxonomy = urlParams.get('taxonomy'); // Get 'taxonomy' from URL
@@ -292,29 +300,6 @@ jQuery(document).ready(function ($) {
             });
         }
     }, 3000);
-
-    // theme  active in popup 
-    // $('.theme-screenshot').click(function() {
-    //     setTimeout(function() {
-    //         location.reload();
-    //         if($('.inactive-theme > a.button.activate').length > 0){
-    //             var inputbtn = $('<a>').attr({
-    //                 class: 'button tempactivatepopup'
-    //             })
-    //             .text('Active').css('cursor', 'pointer');
-    //             $('.inactive-theme > a.button.activate').hide();
-    //             $('.inactive-theme > a.button.activate').parent().prepend(inputbtn);
-    //             $('.tempactivatepopup').on('click', function (event) {
-    //                 $('#cust_popup_title').text('themes');
-    //                 event.preventDefault();
-    //                 gblelem = $(this).parent().find('a.button.activate');
-    //                 gblElemType = 'active_theme_popup';
-    //                 $('#custom-popup').fadeIn(); // Show the popup
-    //             });
-    //         }
-    //     }, 3000); // 3000 milliseconds = 3 seconds
-    // });
-
 
     setTimeout('applytoinstall()',3000);
     setTimeout('applytodelete()',3000);
@@ -429,6 +414,11 @@ jQuery(document).ready(function ($) {
                 $('form#createuser').append(inputElem);
                 $('#custom-popup').fadeOut(); // Hide the popup
                 $('#createusersub').off('click').trigger('click'); // Trigger the original publish action
+            } else if(tmpid == 'save-post'){
+                $('form#post').append(input);            
+                $('form#post').append(inputElem);            
+                $('#custom-popup').fadeOut(); // Hide the popup
+                $('#save-post').off('click').trigger('click'); // Trigger the original publish action
             } else {     
                 let postID = 0;
                 let nonPost = '';
