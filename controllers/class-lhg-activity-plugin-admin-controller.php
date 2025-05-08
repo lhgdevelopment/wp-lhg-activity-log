@@ -46,16 +46,18 @@ class LHG_Activity_Plugin_Admin_Controller {
     }*/
     
     public function enqueue_admin_scripts($hook) {
-        // Get enabled log options from settings        
+        // Get enabled log options from settings
+        //$enabled_logs = get_option('enable_notifications', []);
         $options = get_option('lhg_activity_plugin_settings');
         $logs = isset($options['enable_to_log']) ? explode(',', $options['enable_to_log']) : [];
         $enabled_logs_type = [];
         $enabled_logs_term = [];
-    
+
         // Get the current admin screen
         $screen = get_current_screen();
-        // print_r($screen);
+        // print_r($screen );
         // die;
+        
         
         // post and page
         if (isset($screen->post_type) && (
@@ -65,6 +67,12 @@ class LHG_Activity_Plugin_Admin_Controller {
             $enabled_logs_type[] = 'post';
             $enabled_logs_type[] = 'edit';
         }
+
+        // LHG Activity Settings
+        if (isset($screen->id) && in_array('lhg-activity-logs_page_lhg-activity-plugin-settings', $logs) && ($screen->id === 'lhg-activity-logs_page_lhg-activity-plugin-settings')) {
+            $enabled_logs_type[] = 'lhg-activity-logs_page_lhg-activity-plugin-settings';
+        }
+
 
         // Plugin
         if (isset($screen->id) && in_array('plugins', $logs) && ($screen->id === 'plugins')) {
@@ -82,7 +90,6 @@ class LHG_Activity_Plugin_Admin_Controller {
             $enabled_logs_type[] = 'themes';
             $enabled_logs_type[] = 'theme-install';
         }       
-        
 
         // Dynamically include custom post types
         // $custom_post_types = get_post_types(['_builtin' => false], 'objects');
@@ -103,6 +110,8 @@ class LHG_Activity_Plugin_Admin_Controller {
                 $enabled_logs_term[] = 'term';
             }
         }
+
+
         if (isset($screen->taxonomy) && (
             (in_array('post_tag', $logs) && $screen->taxonomy == 'post_tag') || 
             (in_array('category', $logs) && $screen->taxonomy == 'category')
@@ -110,6 +119,8 @@ class LHG_Activity_Plugin_Admin_Controller {
             $enabled_logs_term[] = 'edit-tags';
             $enabled_logs_term[] = 'term';
         }
+
+        
         // Enqueue the script only if the condition is met
         if ((in_array($screen->base, $enabled_logs_type) && class_exists('\Elementor\Plugin') && \Elementor\Plugin::instance()->editor->is_edit_mode()) || (in_array($screen->base, $enabled_logs_type)) || (in_array($screen->base, $enabled_logs_term))) {
             wp_enqueue_script(
@@ -148,8 +159,9 @@ class LHG_Activity_Plugin_Admin_Controller {
         }
     
         // Ensure additional_info exists
-        if (isset($_POST['additional_info']) && !empty($_POST['additional_info'])) {
+        if (isset($_POST['additional_info']) && !empty($_POST['additional_info']) || (isset($_POST['second_additional_info']) && !empty($_POST['second_additional_info']))) {
             $additional_info = sanitize_text_field($_POST['additional_info']);
+            $second_additional_info = sanitize_text_field($_POST['second_additional_info']);
             $activity_type = sanitize_text_field($_POST['activity_type']);
 
             // Get post title and URL
@@ -172,10 +184,10 @@ class LHG_Activity_Plugin_Admin_Controller {
                 array(
                     'user_id' => $user_id,
                     'description' => $additional_info,
+                    'status' => $second_additional_info,
                     'page_detail' => $post_title.': '.$post_url,
                     'log_page_type' => $post_type,
                     'log_page_id' => $post_id,
-                    'status' => 'active',
                     'activity_type' => $activity_type,
                     'created_at' => gmdate('Y-m-d H:i:s')
                 ),
@@ -189,8 +201,9 @@ class LHG_Activity_Plugin_Admin_Controller {
         global $wpdb;
     
         // Ensure additional_info exists
-        if (isset($_POST['additional_info']) && !empty($_POST['additional_info'])) {
+        if (isset($_POST['additional_info']) && !empty($_POST['additional_info']) || (isset($_POST['second_additional_info']) && !empty($_POST['second_additional_info']))) {
             $additional_info = sanitize_text_field($_POST['additional_info']);
+            $second_additional_info = sanitize_text_field($_POST['second_additional_info']);
             $activity_type = sanitize_text_field($_POST['activity_type']);
     
             // Get user data
@@ -212,10 +225,10 @@ class LHG_Activity_Plugin_Admin_Controller {
                 array(
                     'user_id' => $user_id,
                     'description' => $additional_info . ': '.' (' . $user_email . ')',
+                    'status' => $second_additional_info,
                     'page_detail' => $post_title . ': ' . $post_url,
                     'log_page_type' => $post_type,
                     'log_page_id' => $user_id,
-                    'status' => 'active',
                     'activity_type' => $activity_type,
                     'created_at' => gmdate('Y-m-d H:i:s')
                 ),
@@ -223,13 +236,21 @@ class LHG_Activity_Plugin_Admin_Controller {
             );
         }
     }
+    
+
+
+
+
+
+
 
     // save and list category and tag
     public function save_custom_category_field($term_id) {
         global $wpdb;
     
-        if (isset($_POST['additional_info']) && !empty($_POST['additional_info'])) {
+        if (isset($_POST['additional_info']) && !empty($_POST['additional_info']) || (isset($_POST['second_additional_info']) && !empty($_POST['second_additional_info']))) {
             $additional_info = sanitize_text_field($_POST['additional_info']);
+            $second_additional_info = sanitize_text_field($_POST['second_additional_info']);
             $activity_type = sanitize_text_field($_POST['activity_type']);
     
             // Get term details using the correct term ID
@@ -256,10 +277,10 @@ class LHG_Activity_Plugin_Admin_Controller {
                 array(
                     'user_id' => $user_id,
                     'description' => $additional_info,
+                    'status' => $second_additional_info,
                     'page_detail' => $term_name . ': ' . $term_slug,
                     'log_page_type' => $taxonomy,
                     'log_page_id' => $term_id, // Corrected variable
-                    'status' => 'active',
                     'activity_type' => $activity_type,
                     'created_at' => gmdate('Y-m-d H:i:s')
                 ),

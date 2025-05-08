@@ -3,12 +3,21 @@ let gblElemType='';
 let gblPostIds=[];
 let postType='';
 jQuery(document).ready(function ($) {
+    // alert('ddddd');
     // Append a full-screen modal to the body
     $('body').append(`
+        <style>
+        #additional-info-input:focus-visible, #additional-info-whatchange:focus-visible {
+            outline: 1px solid #cccccc !important; /* Blue border */
+        }
+        </style>
         <div id="custom-popup" style="display: none; z-index: 999999 !important; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5);">
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 40px; border-radius: 5px; width: 100%; max-width:600px; text-align: center;">
-                <h3 style="margin-top:0px;margin-bottom: 15px;">Please provide additional information before saving the <span id="cust_popup_title">post</span>:</h3>
-                <textarea id="additional-info-input" style="width: 100%; height:200px; padding: 5px; margin-bottom: 10px; border:1px solid #cccccc;box-shadow: none;"></textarea>
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 40px; border-radius: 5px; width: 100%; max-width:600px; text-align: left;">
+                <h3 style="margin-top:0px;margin-bottom: 5px;">Please describe what changes you made to this <span id="cust_popup_title">post</span>:</h3>
+                <input id="additional-info-input" style="margin-bottom: 15px;width: 100%; padding: 5px; margin-bottom: 10px; border:1px solid #cccccc;box-shadow: none;" placeholder="A helping text to guide the user to describe what changes they made"></input>
+
+                <h3 style="margin-top:0px;margin-bottom: 5px;">Why you made this changes?</h3>
+                <input id="additional-info-whatchange" style="width: 100%; padding: 5px; margin-bottom: 10px; border:1px solid #cccccc;box-shadow: none;" placeholder="Explain the reason or purpose behind the update..."></input>
                 <button id="confirm-save" style="margin-right: 5px;background: #2271b1;border-color: #2271b1;color: #fff;text-decoration: none;text-shadow: none;padding: 6px 20px;border-radius: 5px;cursor:pointer;">Save</button>
                 <button id="cancel-save" style="margin-right: 5px;background: #b32d2e;border-color: #b32d2e;color: #fff;text-decoration: none;text-shadow: none;padding: 6px 20px;border-radius: 5px;cursor:pointer;">Cancel</button>
             </div>
@@ -29,6 +38,7 @@ jQuery(document).ready(function ($) {
         gblElemType = 'submit_' + postType;
         $('#custom-popup').fadeIn(); // Show the popup
     });
+
 
     // save draft function
     $('#save-post').on('click', function (event) {
@@ -57,6 +67,8 @@ jQuery(document).ready(function ($) {
         gblElemType = 'save_draft_' + postType;
         $('#custom-popup').fadeIn(); // Show the popup
     });  
+
+
 
     // post or page trash button
     if (!(window.location.pathname.includes('/wp-admin/users.php'))) {
@@ -116,30 +128,83 @@ jQuery(document).ready(function ($) {
             });
         }
     } else {   // post category and tag taxonomy create
-        if($('#submit').length > 0){
-            var inputbtn = $('<input>').attr({
-                type: 'button',
-                name: 'tmpsubmit',
-                class: $('#submit').attr('class'),
-                id: 'tmpsubmit',
-                value: $('#submit').val()
-            });
-            $('#submit').hide();
-            $('#submit').parent().prepend(inputbtn);
-            $('#submit').parent().append('<style type="text/css">#submit{display:none !important;}</style>');
-            // category create
-            $('#tmpsubmit').on('click', function (event) {
-                const url = new URL(window.location.href); // Get the full URL
-                const urlParams = new URLSearchParams(url.search); // Extract query parameters
-                const taxonomy = urlParams.get('taxonomy'); // Get 'taxonomy' from URL
-                postType = (taxonomy !== '') ? taxonomy : 'category';   
-                $('#cust_popup_title').text(postType);
-                event.preventDefault();
-                gblelem = $('#submit');
-                gblElemType = 'submit_' + postType;
-                $('#custom-popup').fadeIn(); // Show the popup
-            });
+        if ($('#submit').length > 0) {
+            if (!window.location.href.includes('page=lhg-activity-plugin-settings')) {
+                var inputbtn = $('<input>').attr({
+                    type: 'button',
+                    name: 'tmpsubmit',
+                    class: $('#submit').attr('class'),
+                    id: 'tmpsubmit',
+                    value: $('#submit').val()
+                });
+                $('#submit').hide();
+                $('#submit').parent().prepend(inputbtn);
+                $('#submit').parent().append('<style type="text/css">#submit{display:none !important;}</style>');
+        
+                // category create
+                $('#tmpsubmit').on('click', function (event) {
+                    event.preventDefault();
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const taxonomy = urlParams.get('taxonomy');
+                    const postType = (taxonomy !== '' && taxonomy !== null) ? taxonomy : 'category';
+                    $('#cust_popup_title').text(postType);
+                    gblelem = $('#submit');
+                    gblElemType = 'submit_' + postType;
+                    $('#custom-popup').fadeIn();
+                });
+        
+            } else if (window.location.href.includes('page=lhg-activity-plugin-settings')) {
+                var inputbtn = $('<input>').attr({
+                    type: 'button',
+                    name: 'tmpsubmitsettings',
+                    class: $('#submit').attr('class'),
+                    id: 'tmpsubmitsettings',
+                    value: $('#submit').val()
+                });
+                $('#submit').hide();
+                $('#submit').parent().prepend(inputbtn);
+                $('#submit').parent().append('<style type="text/css">#submit{display:none !important;}</style>');
+        
+                // category create
+                $('#tmpsubmitsettings').on('click', function (event) {
+                    event.preventDefault();
+                    $('#cust_popup_title').text('LHG activity');
+                    gblelem = $('#submit');
+                    gblElemType = 'LHG_active_settings';
+                    $('#custom-popup').fadeIn();
+                });
+            }
         }
+        
+        
+
+
+
+
+        //  if($('#submit').length > 0){
+        //     var inputbtn = $('<input>').attr({
+        //         type: 'button',
+        //         name: 'tmpsubmit',
+        //         class: $('#submit').attr('class'),
+        //         id: 'tmpsubmit',
+        //         value: $('#submit').val()
+        //     });
+        //     $('#submit').hide();
+        //     $('#submit').parent().prepend(inputbtn);
+        //     $('#submit').parent().append('<style type="text/css">#submit{display:none !important;}</style>');
+        //     // category create
+        //     $('#tmpsubmit').on('click', function (event) {
+        //         const url = new URL(window.location.href); // Get the full URL
+        //         const urlParams = new URLSearchParams(url.search); // Extract query parameters
+        //         const taxonomy = urlParams.get('taxonomy'); // Get 'taxonomy' from URL
+        //         postType = (taxonomy !== '') ? taxonomy : 'category';   
+        //         $('#cust_popup_title').text(postType);
+        //         event.preventDefault();
+        //         gblelem = $('#submit');
+        //         gblElemType = 'submit_' + postType;
+        //         $('#custom-popup').fadeIn(); // Show the popup
+        //     });
+        // }
     }
 
     
@@ -378,14 +443,23 @@ jQuery(document).ready(function ($) {
 
     // Handle save button click inside the popup
     $('#confirm-save').on('click', function () {
+        //alert('test');
         var additionalInfo = $('#additional-info-input').val().trim();
+        var secondadditionalInfo = $('#additional-info-whatchange').val().trim();
         var activity_type = gblElemType;
-        if (additionalInfo) {
+        
+        if (additionalInfo && secondadditionalInfo) {
             var input = $('<input>').attr({
                 type: 'hidden',
                 name: 'additional_info',
                 class:'additional_info_cl',
                 value: additionalInfo
+            });
+            var madechange = $('<input>').attr({
+                type: 'hidden',
+                name: 'second_additional_info',
+                class:'second_additional_info_cl',
+                value: secondadditionalInfo
             });
             var inputElem = $('<input>').attr({
                 type: 'hidden',
@@ -397,25 +471,30 @@ jQuery(document).ready(function ($) {
             let tmpclass = gblelem.parent().attr('class');
             if(tmpid == 'publish'){
                 $('form#post').append(input);            
+                $('form#post').append(madechange);            
                 $('form#post').append(inputElem);            
                 $('#custom-popup').fadeOut(); // Hide the popup
                 $('#publish').off('click').trigger('click'); // Trigger the original publish action
-            } else if(tmpid == 'submit' && !(window.location.pathname.includes('/wp-admin/users.php'))){
+            } else if(tmpid == 'submit' && !(window.location.pathname.includes('/wp-admin/users.php')) && !(window.location.pathname.includes('/wp-admin/admin.php'))){
                 $('form#addtag').append(input);            
+                $('form#addtag').append(madechange);            
                 $('form#addtag').append(inputElem); 
                 $('#custom-popup').fadeOut(); // Hide the popup
                 $('#submit').trigger('click'); // Trigger the original publish action
             } else if (tmpclass == 'edit-tag-actions') {
                 $('form#edittag').append(input);
+                $('form#edittag').append(madechange);
                 $('form#edittag').append(inputElem);
                 $('.edit-tag-actions > input[type=submit]').trigger('click');
             } else if (tmpid == 'createusersub') {
                 $('form#createuser').append(input);
+                $('form#createuser').append(madechange);
                 $('form#createuser').append(inputElem);
                 $('#custom-popup').fadeOut(); // Hide the popup
                 $('#createusersub').off('click').trigger('click'); // Trigger the original publish action
             } else if(tmpid == 'save-post'){
                 $('form#post').append(input);            
+                $('form#post').append(madechange);            
                 $('form#post').append(inputElem);            
                 $('#custom-popup').fadeOut(); // Hide the popup
                 $('#save-post').off('click').trigger('click'); // Trigger the original publish action
@@ -471,6 +550,9 @@ jQuery(document).ready(function ($) {
                     const url = new URL(gbllink, window.location.origin); // Ensure absolute URL
                     const urlParams = new URLSearchParams(url.search); 
                     nonPost = 'Plugin ::'+urlParams.get('stylesheet')+'::'+tmpTitle+'::'+gbllink;
+                } else if(gblElemType == 'LHG_active_settings'){
+                    const url = window.location; // Ensure absolute URL
+                    nonPost = 'Activity Log Settings ::'+url+'::Activity Log Settings::'+url;
                 } else {
                     let gbllink;
                     gbllink = gblelem.attr('href');
@@ -485,6 +567,7 @@ jQuery(document).ready(function ($) {
                 formData.append('non_post', nonPost);
                 formData.append('admin_user', nonPostuser);
                 formData.append('additional_info', additionalInfo);
+                formData.append('second_additional_info', secondadditionalInfo);
                 formData.append('nonce', customElementorAjax.nonce);    
                 formData.append('activity_type', gblElemType); 
                 $.ajax({
@@ -497,7 +580,7 @@ jQuery(document).ready(function ($) {
                         $('#custom-popup').fadeOut(); 
                         if(gblElemType == 'elementor_post' || gblElemType == 'bulk_delete_' + postType || gblElemType == 'bulk_restore_' + postType || gblElemType == 'bulk_delete_taxonomy_' + postType || gblElemType == 'bulk_plugin_active' || gblElemType == 'bulk_plugin_deactivate' || gblElemType == 'bulk_plugin_delete' ||  gblElemType == 'bulk_plugin_update' || gblElemType == 'bulk_plugin_enable_auto_update' || gblElemType == 'bulk_plugin_disable_auto_update' || gblElemType == 'delete_user'){
                             $(gblelem).off('click').trigger('click'); // Trigger the original publish action
-                        } else if (gblElemType == 'delete_plugin'){ 
+                        } else if (gblElemType == 'delete_plugin' || gblElemType == 'LHG_active_settings'){ 
                             // window.location = $(gblelem).attr('href');
                             $(gblelem).trigger('click');
                         } else {
@@ -513,6 +596,8 @@ jQuery(document).ready(function ($) {
         } else {
             $('#additional-info-input').focus();
             $('#additional-info-input').css("border-color", "#b32d2e");
+            $('#additional-info-whatchange').focus();
+            $('#additional-info-whatchange').css("border-color", "#b32d2e");
         }
     });
 
@@ -521,6 +606,8 @@ jQuery(document).ready(function ($) {
         $('#custom-popup').fadeOut(); // Hide the popup
         $('#additional-info-input').val('');
         $('#additional-info-input').css("border-color", "#cccccc");
+        $('#additional-info-whatchange').val('');
+        $('#additional-info-whatchange').css("border-color", "#cccccc");
     });
 
     function addPromptToElementorButtons() {
