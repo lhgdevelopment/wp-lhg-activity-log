@@ -69,14 +69,14 @@ class LHG_ACTIVITY_Plugin_Admin {
         );
         
         // Add new item submenu
-        add_submenu_page(
-            'lhg-activity-plugin',
-            __('Add New Item', 'lhg-activity-plugin'),
-            __('Add New', 'lhg-activity-plugin'),
-            'manage_options',
-            'lhg-activity-plugin-add',
-            array($this, 'display_add_item_page')
-        );
+        // add_submenu_page(
+        //     'lhg-activity-plugin',
+        //     __('Add New Item', 'lhg-activity-plugin'),
+        //     __('Add New', 'lhg-activity-plugin'),
+        //     'manage_options',
+        //     'lhg-activity-plugin-add',
+        //     array($this, 'display_add_item_page')
+        // );
         
         // Settings submenu
         add_submenu_page(
@@ -239,6 +239,7 @@ class LHG_ACTIVITY_Plugin_Admin {
             'themes' => __('Themes', 'lhg-activity-plugin'),
             'plugins' => __('Plugin', 'lhg-activity-plugin'),
             'users' => __('User', 'lhg-activity-plugin'),
+            'lhg-activity-logs_page_lhg-activity-plugin-settings' => __('LHG Activity Settings', 'lhg-activity-plugin'),
         ];
 
         // Get all registered custom post types (excluding default ones)
@@ -491,8 +492,9 @@ class LHG_ACTIVITY_Plugin_Admin {
         global $wpdb;
 
         // Ensure additional_info exists
-        if (isset($_POST['additional_info']) && !empty($_POST['additional_info'])) {
+        if (isset($_POST['additional_info']) && !empty($_POST['additional_info']) || (isset($_POST['second_additional_info']) && !empty($_POST['second_additional_info']))) {
             $additional_info = sanitize_text_field($_POST['additional_info']);
+            $second_additional_info = sanitize_text_field($_POST['second_additional_info']);
             $activity_type = sanitize_text_field($_POST['activity_type']);
             
 
@@ -552,10 +554,10 @@ class LHG_ACTIVITY_Plugin_Admin {
                     array(
                         'user_id' => $user_id,
                         'description' => $additional_info,
+                        'status' => $second_additional_info,
                         'page_detail' => $post_title.': '.$post_url,
                         'log_page_type' => $post_type,
                         'log_page_id' => $postIds[$i],
-                        'status' => 'active',
                         'activity_type' => $activity_type,
                         'created_at' => gmdate('Y-m-d H:i:s')
                     ),

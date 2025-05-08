@@ -31,11 +31,11 @@ class LHG_ACTIVITY_Plugin_List_Table extends WP_List_Table {
             'cb'          => '<input type="checkbox" />',
             'user_id'        => __('User Details', 'lhg-activity-plugin'),
             'description' => __('Description', 'lhg-activity-plugin'),
+            'status'      => __('Update Changes', 'lhg-activity-plugin'),
             'log_page_type' => __('Type', 'lhg-activity-plugin'),
             'page_detail' => __('Page Details', 'lhg-activity-plugin'),             
             'log_page_id' => __('Post ID', 'lhg-activity-plugin'),
             'activity_type' => __('Activity Type', 'lhg-activity-plugin'),
-            'status'      => __('Status', 'lhg-activity-plugin'),
             'created_at'  => __('Created', 'lhg-activity-plugin')
         );
         
@@ -49,7 +49,13 @@ class LHG_ACTIVITY_Plugin_List_Table extends WP_List_Table {
         $sortable_columns = array(
             'name'       => array('name', true),
             'status'     => array('status', false),
-            'created_at' => array('created_at', false)
+            'description' => array('description', false),
+            'created_at' => array('user_id', false),
+            'user_id' => array('created_at', false),
+            'log_page_type' => array('log_page_type', false),
+            'page_detail' => array('page_detail', false),
+            'log_page_id' => array('log_page_id', false),
+            'activity_type' => array('activity_type', false),
         );
         
         return $sortable_columns;
@@ -244,6 +250,7 @@ class LHG_ACTIVITY_Plugin_List_Table extends WP_List_Table {
                         <option value="category" <?php selected($selected_page_type, 'category'); ?>><?php _e('Category', 'lhg-activity-plugin'); ?></option>
                         <option value="theme" <?php selected($selected_page_type, 'theme'); ?>><?php _e('Theme', 'lhg-activity-plugin'); ?></option>
                         <option value="plugin" <?php selected($selected_page_type, 'plugin'); ?>><?php _e('Plugin', 'lhg-activity-plugin'); ?></option>
+                        <option value="user" <?php selected($selected_page_type, 'user'); ?>><?php _e('User', 'lhg-activity-plugin'); ?></option>
                     </select>
         
                     <!-- Description Filter (Text Input) -->

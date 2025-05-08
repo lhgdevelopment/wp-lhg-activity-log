@@ -68,7 +68,3 @@ function add_view_log_button_to_plugins($actions, $plugin_file) {
 }
 // Add filter for plugins listing page
 add_filter('plugin_action_links', 'add_view_log_button_to_plugins', 10, 2);
-
-
-
-

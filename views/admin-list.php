@@ -4,9 +4,6 @@
  */
 ?>
 <div class="wrap">
-    <h1 class="wp-heading-inline"><?php echo esc_html__('Items', 'lhg-activity-plugin'); ?></h1>
-    <a href="<?php echo esc_url(admin_url('admin.php?page=lhg-activity-plugin-add')); ?>" class="page-title-action"><?php echo esc_html__('Add New', 'lhg-activity-plugin'); ?></a>
-    <hr class="wp-header-end">
     
     <div id="lhg-activity-message" class="notice is-dismissible" style="display:none;"></div>
     
